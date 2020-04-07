@@ -11,4 +11,6 @@
   - debug: var=login
   
   - name: Storing Logs and Generated token for future purpose.
-    local_action: copy content={{ login.stdout }} dest={{ token_file }}
+    copy: content={{ login.stdout }} dest=/home/{{ ansible_user }}/token_file
+
+  - debug: var=token_file

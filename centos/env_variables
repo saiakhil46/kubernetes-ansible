@@ -1,8 +1,8 @@
 #Edit values only as per your environment
 #Enter your master node advertise ip address and cidr range for the pods.
-ad_addr: 10.128.10.26
+ad_addr: 10.128.10.30
 cidr_v: 10.240.0.0/16
-
+ansible_user: saiakhil
 ###################################################################################
 # Dont Edit these below values, these are mandatory to configure kubernetes cluster
 packages:

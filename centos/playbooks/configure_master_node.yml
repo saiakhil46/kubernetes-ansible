@@ -9,16 +9,23 @@
     register: output
 
   - debug: 
-      var: output.stdout
+      var: output
 
   - name: Storing Logs and Generated token for future purpose.
-    local_action: copy content={{ output.stdout }} dest={{ token_file }}
+    copy: content={{ output.stdout }} dest=/home/{{ ansible_user }}/join_token
 
   - name: Copying required files
     shell: |
      mkdir -p $HOME/.kube
      sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
      sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+  - name: Copying required files to ansible_user defined in env_variables file
+    shell: |
+     mkdir -p /home/{{ ansible_user }}/.kube
+     sudo cp -i /etc/kubernetes/admin.conf /home/{{ ansible_user }}/.kube/config
+     sudo chown {{ ansible_user }}:{{ ansible_user }} /home/{{ ansible_user }}/.kube/config
+
 
   - name: Install Network Add-on
     command: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
