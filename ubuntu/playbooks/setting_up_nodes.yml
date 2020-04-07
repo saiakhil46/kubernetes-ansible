@@ -4,15 +4,18 @@
   vars_files:
   - env_variables 
   tasks:
-  - name: Creating a repository file for Kubernetes
-    apt_repository:
-      repo: deb http://apt.kubernetes.io/ kubernetes-xenial main
-      state: present
-  
   - name: Adding repository key for kubernetes.
-    apt_key:
-      url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
-      state: present
+    shell: curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add
+    #apt_key:
+    #  url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+    #  state: present
+  
+  - name: Creating a repository file for Kubernetes
+    shell: apt-add-repository "deb http://apt.kubernetes.io/ kubernetes-xenial main"
+    #apt_repository:
+    #  repo: deb http://apt.kubernetes.io/ kubernetes-xenial main
+    #  state: present
+  
 
   - name: Upgrade all packages to the latest version
     apt:
@@ -24,9 +27,10 @@
       upgrade: dist
   
   - name: Installing required packages
-    apt:
-     name: "{{ item }}"
-     state: present
+    shell: sudo apt install -y {{ item }}
+    # apt:
+    # name: "{{ item }}"
+    # state: present
     with_items: "{{ packages }}"
 
   - name: Starting and Enabling the required services
