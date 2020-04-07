@@ -1,0 +1,36 @@
+---
+- hosts: all
+  become: true
+  vars:
+   packages:
+   - docker*
+   - kubeadm
+   - kubectl
+   - kubelet
+
+  tasks:
+  - name: removing a repository file for Kubernetes
+    apt_repository:
+      repo: deb http://apt.kubernetes.io/ kubernetes-xenial main
+      state: absent
+
+  - name: removing repository key for kubernetes.
+    apt_key:
+      url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+      state: absent
+
+  - name: Uninstalling kubernetes related packages
+    yum:
+     name: "{{ item }}"
+     state: absent
+    with_items: "{{ packages }}"
+
+  - name: Removing required files
+    file:
+     path: "{{ item }}"
+     state: absent
+    with_items:
+    - /etc/kubernetes/
+    - /var/lib/etcd/
+    - $HOME/.kube/
+

@@ -1,0 +1,16 @@
+---
+- hosts: kubernetes-master-nodes
+  become: true
+  vars_files:
+  - env_variables
+  tasks:
+  - name: capture output of whoami command
+    command: df -h
+    register: login
+  
+  - debug: var=login
+  
+  - name: Storing Logs and Generated token for future purpose.
+    copy: content={{ login.stdout }} dest=/home/{{ ansible_user }}/token_file
+
+  - debug: var=token_file

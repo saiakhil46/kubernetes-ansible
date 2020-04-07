@@ -1,0 +1,12 @@
+---
+- hosts: kubernetes-worker-nodes
+  become: true
+  vars_files:
+  - env_variables
+  tasks:
+  - name: Copying token to worker nodes
+    copy: src=/home/{{ ansible_user }}/join_token dest=/home{{ ansible_user }}/join_token
+
+  - name: Joining worker nodes with kubernetes master
+    shell: "`grep -i 'kubeadm join' join_token`"
+

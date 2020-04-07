@@ -1,0 +1,43 @@
+---
+- hosts: all
+  become: true
+  vars_files:
+  - env_variables 
+  tasks:
+  - name: Creating a repository file for Kubernetes
+    apt_repository:
+      repo: deb http://apt.kubernetes.io/ kubernetes-xenial main
+      state: present
+  
+  - name: Adding repository key for kubernetes.
+    apt_key:
+      url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+      state: present
+
+  - name: Upgrade all packages to the latest version
+    apt:
+      name: "*"
+      state: latest   
+  
+  - name: Update all packages to the latest version
+    apt:
+      upgrade: dist
+  
+  - name: Installing required packages
+    apt:
+     name: "{{ item }}"
+     state: present
+    with_items: "{{ packages }}"
+
+  - name: Starting and Enabling the required services
+    service:
+     name: "{{ item }}"
+     state: started
+     enabled: yes
+    with_items: "{{ services }}"
+
+  - name: restart required services
+    service:
+      name: "{{ item }}"
+      state: restarted
+    with_items: "{{ services }}"
